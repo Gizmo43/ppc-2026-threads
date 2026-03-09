@@ -22,7 +22,7 @@ class RedkinaAIntegralSimpsonOMP : public BaseTask {
   bool RunImpl() override;
   bool PostProcessingImpl() override;
 
-  std::function<double(const std::vector<double> &)> func_;
+  std::function<double(const std::vector<double>&)> func_;
   std::vector<double> a_;
   std::vector<double> b_;
   std::vector<int> n_;

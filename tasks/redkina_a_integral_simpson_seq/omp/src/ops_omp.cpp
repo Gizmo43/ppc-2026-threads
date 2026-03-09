@@ -36,10 +36,13 @@ bool AdvanceIndices(std::vector<int> &indices, const std::vector<int> &n) {
   return true;
 }
 
-double TraverseRemainingDimensions(const std::vector<double> &sub_a, const std::vector<double> &sub_h,
-                                   const std::vector<int> &sub_n, double w_first,
-                                   const std::function<double(const std::vector<double> &)> &func,
-                                   std::vector<double> &point, size_t sub_dim) {
+double TraverseRemainingDimensions(const std::vector<double>& sub_a,
+                                   const std::vector<double>& sub_h,
+                                   const std::vector<int>& sub_n,
+                                   double w_first,
+                                   const std::function<double(const std::vector<double>&)>& func,
+                                   std::vector<double>& point,
+                                   size_t sub_dim) {
   if (sub_dim == 0) {
     return 0.0;
   }
@@ -60,8 +63,12 @@ double TraverseRemainingDimensions(const std::vector<double> &sub_a, const std::
   return sum;
 }
 
-double ProcessSubspace(const std::vector<double> &a, const std::vector<double> &h, const std::vector<int> &n,
-                       int first_index, const std::function<double(const std::vector<double> &)> &func, size_t dim) {
+double ProcessSubspace(const std::vector<double>& a,
+                       const std::vector<double>& h,
+                       const std::vector<int>& n,
+                       int first_index,
+                       const std::function<double(const std::vector<double>&)>& func,
+                       size_t dim) {
   if (dim == 0) {
     return 0.0;
   }
@@ -85,7 +92,9 @@ double ProcessSubspace(const std::vector<double> &a, const std::vector<double> &
     sub_a[dim_idx - 1] = a[dim_idx];
   }
 
-  double sub_sum = TraverseRemainingDimensions(sub_a, sub_h, sub_n, static_cast<double>(w_first), func, point, sub_dim);
+  double sub_sum = TraverseRemainingDimensions(sub_a, sub_h, sub_n,
+                                               static_cast<double>(w_first),
+                                               func, point, sub_dim);
   return sub_sum;
 }
 
@@ -142,10 +151,10 @@ bool RedkinaAIntegralSimpsonOMP::RunImpl() {
   double total_sum = 0.0;
   int n0 = n_[0];
 
-  const auto &a_ref = a_;
-  const auto &h_ref = h;
-  const auto &n_ref = n_;
-  const auto &func_ref = func_;
+  const auto& a_ref = a_;
+  const auto& h_ref = h;
+  const auto& n_ref = n_;
+  const auto& func_ref = func_;
   size_t dim_val = dim;
   int n0_val = n0;
 
