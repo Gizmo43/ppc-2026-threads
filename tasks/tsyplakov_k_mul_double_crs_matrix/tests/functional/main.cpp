@@ -83,7 +83,7 @@ class TsyplakovKRunFuncTestsThreads : public ppc::util::BaseRunFuncTests<InType,
       return false;
     }
 
-    if (output_data.row_ptr.size() != static_cast<size_t>(output_data.rows) + 1) {  
+    if (output_data.row_ptr.size() != static_cast<size_t>(output_data.rows) + 1) {
       return false;
     }
 

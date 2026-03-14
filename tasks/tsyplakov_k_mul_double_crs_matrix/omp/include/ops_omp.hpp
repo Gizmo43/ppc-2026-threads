@@ -1,7 +1,7 @@
 #pragma once
 
-#include "tsyplakov_k_mul_double_crs_matrix/common/include/common.hpp"
 #include "task/include/task.hpp"
+#include "tsyplakov_k_mul_double_crs_matrix/common/include/common.hpp"
 
 namespace tsyplakov_k_mul_double_crs_matrix {
 
@@ -11,7 +11,7 @@ class TsyplakovKTestTaskOMP : public BaseTask {
     return ppc::task::TypeOfTask::kOMP;
   }
 
-  explicit TsyplakovKTestTaskOMP(const InType& in);
+  explicit TsyplakovKTestTaskOMP(const InType &in);
 
  private:
   bool ValidationImpl() override;

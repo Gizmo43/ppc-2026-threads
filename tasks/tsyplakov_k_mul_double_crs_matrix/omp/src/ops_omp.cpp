@@ -8,24 +8,26 @@
 
 namespace tsyplakov_k_mul_double_crs_matrix {
 
-TsyplakovKTestTaskOMP::TsyplakovKTestTaskOMP(const InType& in) {
+TsyplakovKTestTaskOMP::TsyplakovKTestTaskOMP(const InType &in) {
   SetTypeOfTask(GetStaticTypeOfTask());
   GetInput() = in;
 }
 
 bool TsyplakovKTestTaskOMP::ValidationImpl() {
-  const auto& input = GetInput();
+  const auto &input = GetInput();
   return input.a.cols == input.b.rows;
 }
 
-bool TsyplakovKTestTaskOMP::PreProcessingImpl() { return true; }
+bool TsyplakovKTestTaskOMP::PreProcessingImpl() {
+  return true;
+}
 
 bool TsyplakovKTestTaskOMP::RunImpl() {
-  const auto& input = GetInput();
-  const auto& A = input.a;
-  const auto& B = input.b;
+  const auto &input = GetInput();
+  const auto &a = input.a;
+  const auto &b = input.b;
 
-  const int rows = A.rows;
+  const int rows = a.rows;
 
   std::vector<std::vector<double>> row_values(rows);
   std::vector<std::vector<int>> row_cols(rows);
@@ -34,20 +36,20 @@ bool TsyplakovKTestTaskOMP::RunImpl() {
   for (int i = 0; i < rows; ++i) {
     std::unordered_map<int, double> acc;
 
-    for (int a = A.row_ptr[i]; a < A.row_ptr[i + 1]; ++a) {
-      int k = A.col_index[a];
-      double valA = A.values[a];
+    for (int j = a.row_ptr[i]; j < a.row_ptr[i + 1]; ++j) {
+      int k = a.col_index[j];
+      double val_a = a.values[j];
 
-      for (int b = B.row_ptr[k]; b < B.row_ptr[k + 1]; ++b) {
-        int j = B.col_index[b];
-        acc[j] += valA * B.values[b];
+      for (int z = b.row_ptr[k]; z < b.row_ptr[k + 1]; ++z) {
+        int j1 = b.col_index[z];
+        acc[j1] += val_a * b.values[z];
       }
     }
 
     row_values[i].reserve(acc.size());
     row_cols[i].reserve(acc.size());
 
-    for (const auto& [col, val] : acc) {
+    for (const auto &[col, val] : acc) {
       if (std::fabs(val) > 1e-12) {
         row_cols[i].push_back(col);
         row_values[i].push_back(val);
@@ -55,27 +57,29 @@ bool TsyplakovKTestTaskOMP::RunImpl() {
     }
   }
 
-  SparseMatrixCRS C(A.rows, B.cols);
+  SparseMatrixCRS c(a.rows, b.cols);
 
-  for (int i = 0; i < C.rows; ++i) {
-    C.row_ptr[i + 1] = C.row_ptr[i] + row_values[i].size();
+  for (int i = 0; i < c.rows; ++i) {
+    c.row_ptr[i + 1] = c.row_ptr[i] + row_values[i].size();
   }
 
-  const int nnz = C.row_ptr[C.rows];
+  const int nnz = c.row_ptr[c.rows];
 
-  C.values.reserve(nnz);
-  C.col_index.reserve(nnz);
+  c.values.reserve(nnz);
+  c.col_index.reserve(nnz);
 
-  for (int i = 0; i < C.rows; ++i) {
-    C.values.insert(C.values.end(), row_values[i].begin(), row_values[i].end());
-    C.col_index.insert(C.col_index.end(), row_cols[i].begin(), row_cols[i].end());
+  for (int i = 0; i < c.rows; ++i) {
+    c.values.insert(c.values.end(), row_values[i].begin(), row_values[i].end());
+    c.col_index.insert(c.col_index.end(), row_cols[i].begin(), row_cols[i].end());
   }
 
-  GetOutput() = std::move(C);
+  GetOutput() = std::move(c);
 
   return true;
 }
 
-bool TsyplakovKTestTaskOMP::PostProcessingImpl() { return true; }
+bool TsyplakovKTestTaskOMP::PostProcessingImpl() {
+  return true;
+}
 
 }  // namespace tsyplakov_k_mul_double_crs_matrix
