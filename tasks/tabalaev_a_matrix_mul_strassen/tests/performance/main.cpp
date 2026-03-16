@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <tuple>
 #include <vector>
 
 #include "tabalaev_a_matrix_mul_strassen/common/include/common.hpp"

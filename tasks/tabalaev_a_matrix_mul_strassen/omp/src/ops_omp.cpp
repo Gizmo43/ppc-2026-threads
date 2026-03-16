@@ -2,10 +2,12 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <stack>
+#include <utility>
 #include <vector>
 
-#include "util/include/util.hpp"
+#include "tabalaev_a_matrix_mul_strassen/common/include/common.hpp"
 
 namespace tabalaev_a_matrix_mul_strassen {
 
@@ -41,7 +43,7 @@ bool TabalaevAMatrixMulStrassenOMP::PreProcessingImpl() {
   padded_a_.assign(padded_n_ * padded_n_, 0.0);
   padded_b_.assign(padded_n_ * padded_n_, 0.0);
 
-#pragma omp parallel
+#pragma omp parallel default(none) shared(in, padded_a_, padded_b_, a_rows_, a_cols_b_rows_, b_cols_, padded_n_)
   {
 #pragma omp for nowait
     for (size_t i = 0; i < a_rows_; ++i) {
@@ -66,7 +68,7 @@ bool TabalaevAMatrixMulStrassenOMP::RunImpl() {
   auto &out = GetOutput();
   out.assign(a_rows_ * b_cols_, 0.0);
 
-#pragma omp parallel for
+#pragma omp parallel for default(none) shared(out, result_c_, a_rows_, b_cols_, padded_n_)
   for (size_t i = 0; i < a_rows_; ++i) {
     for (size_t j = 0; j < b_cols_; ++j) {
       out[(i * b_cols_) + j] = result_c_[(i * padded_n_) + j];
@@ -85,7 +87,7 @@ std::vector<double> TabalaevAMatrixMulStrassenOMP::Add(const std::vector<double>
   const size_t n = mat_a.size();
   std::vector<double> res(n);
 
-#pragma omp parallel for
+#pragma omp parallel for default(none) shared(mat_a, mat_b, res, n)
   for (size_t i = 0; i < n; ++i) {
     res[i] = mat_a[i] + mat_b[i];
   }
@@ -98,7 +100,7 @@ std::vector<double> TabalaevAMatrixMulStrassenOMP::Subtract(const std::vector<do
   const size_t n = mat_a.size();
   std::vector<double> res(mat_a.size());
 
-#pragma omp parallel for
+#pragma omp parallel for default(none) shared(mat_a, mat_b, res, n)
   for (size_t i = 0; i < n; ++i) {
     res[i] = mat_a[i] - mat_b[i];
   }
@@ -110,7 +112,7 @@ std::vector<double> TabalaevAMatrixMulStrassenOMP::BaseMultiply(const std::vecto
                                                                 const std::vector<double> &mat_b, size_t n) {
   std::vector<double> res(n * n, 0.0);
 
-#pragma omp parallel for
+#pragma omp parallel for default(none) shared(mat_a, mat_b, res, n)
   for (size_t i = 0; i < n; ++i) {
     for (size_t k = 0; k < n; ++k) {
       double temp = mat_a[(i * n) + k];
@@ -136,7 +138,7 @@ void TabalaevAMatrixMulStrassenOMP::SplitMatrix(const std::vector<double> &src, 
   c21.resize(sz);
   c22.resize(sz);
 
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2) default(none) shared(src, c11, c12, c21, c22, h, n)
   for (size_t i = 0; i < h; ++i) {
     for (size_t j = 0; j < h; ++j) {
       size_t src_idx = (i * n) + j;
@@ -156,7 +158,7 @@ std::vector<double> TabalaevAMatrixMulStrassenOMP::CombineMatrix(const std::vect
   size_t h = n / 2;
   std::vector<double> res(n * n);
 
-#pragma omp parallel for collapse(2)
+#pragma omp parallel for collapse(2) default(none) shared(res, c11, c12, c21, c22, h, n)
   for (size_t i = 0; i < h; ++i) {
     for (size_t j = 0; j < h; ++j) {
       size_t src_idx = (i * h) + j;
@@ -200,7 +202,7 @@ std::vector<double> TabalaevAMatrixMulStrassenOMP::StrassenMultiply(const std::v
       std::vector<double> c21(sz);
       std::vector<double> c22(sz);
 
-#pragma omp parallel for
+#pragma omp parallel for default(none) shared(p, c11, c12, c21, c22, sz)
       for (size_t i = 0; i < sz; ++i) {
         c11[i] = p[0][i] + p[3][i] - p[4][i] + p[6][i];
         c12[i] = p[2][i] + p[4][i];
