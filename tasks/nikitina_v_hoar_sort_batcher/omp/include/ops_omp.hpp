@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include "nikitina_v_hoar_sort_batcher/common/include/common.hpp"
 
 namespace nikitina_v_hoar_sort_batcher {
@@ -11,7 +9,7 @@ class HoareSortBatcherOMP : public BaseTask {
   static constexpr ppc::task::TypeOfTask GetStaticTypeOfTask() {
     return ppc::task::TypeOfTask::kOMP;
   }
-  explicit HoareSortBatcherOMP(const InType &in);
+  explicit HoareSortBatcherOMP(InType in);
 
  private:
   bool ValidationImpl() override;
