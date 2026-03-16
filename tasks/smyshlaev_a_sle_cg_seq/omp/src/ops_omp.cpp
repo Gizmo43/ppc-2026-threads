@@ -134,7 +134,7 @@ bool SmyshlaevASleCgTaskOMP::RunParallel(int num_threads) {
   int n_iters = static_cast<int>(n);
 
 // Единственный вызов OMP, как в вашем исходном коде, но с фиксом для CI
-#pragma omp parallel for reduction(+ : rs_old) num_threads(num_threads)
+#pragma omp parallel for default(none) shared(n_iters, r) num_threads(num_threads) reduction(+ : rs_old)
   for (int i = 0; i < n_iters; ++i) {
     rs_old += r[i] * r[i];
   }
@@ -185,7 +185,7 @@ bool SmyshlaevASleCgTaskOMP::RunImpl() {
   return RunParallel(num_threads);
 }
 
-ool SmyshlaevASleCgTaskOMP::PostProcessingImpl() {
+bool SmyshlaevASleCgTaskOMP::PostProcessingImpl() {
   return true;
 }
 
