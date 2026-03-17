@@ -4,8 +4,6 @@
 
 #include <cmath>
 #include <cstddef>
-#include <memory>
-#include <stack>
 #include <vector>
 
 #include "morozova_s_strassen_multiplication/common/include/common.hpp"
@@ -13,17 +11,6 @@
 namespace morozova_s_strassen_multiplication {
 
 namespace {
-
-struct StrassenTask {
-  Matrix a;
-  Matrix b;
-  int depth;
-  int task_id;
-  Matrix *result;
-
-  StrassenTask(const Matrix &a_, const Matrix &b_, int d_, int id_, Matrix *res_)
-      : a(a_), b(b_), depth(d_), task_id(id_), result(res_) {}
-};
 
 Matrix AddMatrixImpl(const Matrix &a, const Matrix &b) {
   int n = a.size;
@@ -127,7 +114,13 @@ Matrix MultiplyStandardParallelImpl(const Matrix &a, const Matrix &b) {
 void ComputeStrassenLevel(const Matrix &a11, const Matrix &a12, const Matrix &a21, const Matrix &a22, const Matrix &b11,
                           const Matrix &b12, const Matrix &b21, const Matrix &b22, Matrix &c11, Matrix &c12,
                           Matrix &c21, Matrix &c22, int leaf_size, int max_depth, int current_depth) {
-  Matrix p1, p2, p3, p4, p5, p6, p7;
+  Matrix p1;
+  Matrix p2;
+  Matrix p3;
+  Matrix p4;
+  Matrix p5;
+  Matrix p6;
+  Matrix p7;
 
   if (current_depth < max_depth) {
 #pragma omp parallel sections default(none) \
@@ -179,7 +172,8 @@ void ComputeStrassenLevel(const Matrix &a11, const Matrix &a12, const Matrix &a2
       }
     }
   } else {
-    Matrix temp1, temp2;
+    Matrix temp1;
+    Matrix temp2;
 
     temp1 = SubtractMatrixImpl(b12, b22);
     p1 = MultiplyStandardParallelImpl(a11, temp1);
@@ -222,19 +216,29 @@ void ComputeStrassenLevel(const Matrix &a11, const Matrix &a12, const Matrix &a2
 
 Matrix StrassenMultiplyIterative(const Matrix &a, const Matrix &b, int leaf_size, int max_depth) {
   int n = a.size;
+
   if (n <= leaf_size || n % 2 != 0) {
     return MultiplyStandardParallelImpl(a, b);
   }
 
   int half = n / 2;
 
-  Matrix a11(half), a12(half), a21(half), a22(half);
-  Matrix b11(half), b12(half), b21(half), b22(half);
+  Matrix a11(half);
+  Matrix a12(half);
+  Matrix a21(half);
+  Matrix a22(half);
+  Matrix b11(half);
+  Matrix b12(half);
+  Matrix b21(half);
+  Matrix b22(half);
 
   SplitMatrixImpl(a, a11, a12, a21, a22);
   SplitMatrixImpl(b, b11, b12, b21, b22);
 
-  Matrix c11(half), c12(half), c21(half), c22(half);
+  Matrix c11(half);
+  Matrix c12(half);
+  Matrix c21(half);
+  Matrix c22(half);
 
   ComputeStrassenLevel(a11, a12, a21, a22, b11, b12, b21, b22, c11, c12, c21, c22, leaf_size, max_depth, 0);
 
