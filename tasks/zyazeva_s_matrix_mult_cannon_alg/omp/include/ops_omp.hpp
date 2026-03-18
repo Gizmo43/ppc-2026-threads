@@ -19,6 +19,10 @@ class ZyazevaSMatrixMultCannonAlgOMP : public BaseTask {
   bool PreProcessingImpl() override;
   bool RunImpl() override;
   bool PostProcessingImpl() override;
+
+  static bool IsPerfectSquare(int x);
+  static void MultiplyBlocks(const std::vector<double> &a, const std::vector<double> &b, std::vector<double> &c,
+                             int block_size);
 };
 
 }  // namespace zyazeva_s_matrix_mult_cannon_alg
