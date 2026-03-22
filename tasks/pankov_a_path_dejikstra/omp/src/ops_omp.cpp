@@ -74,8 +74,7 @@ bool PankovAPathDejikstraOMP::PreProcessingImpl() {
   }
 
   std::vector<Edge> sorted_edges = input.edges;
-  std::ranges::sort(sorted_edges,
-                    [](const Edge &lhs, const Edge &rhs) { return std::get<0>(lhs) < std::get<0>(rhs); });
+  std::ranges::sort(sorted_edges, [](const Edge &lhs, const Edge &rhs) { return std::get<0>(lhs) < std::get<0>(rhs); });
 
   std::vector<std::size_t> offsets(input.n + 1, 0);
   std::size_t edge_idx = 0;
