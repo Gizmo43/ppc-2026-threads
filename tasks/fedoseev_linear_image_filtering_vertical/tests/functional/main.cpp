@@ -139,12 +139,15 @@ class FedoseevFuncTest : public ppc::util::BaseRunFuncTests<Image, Image, TestTy
 
 namespace {
 
-// Вспомогательная функция для снижения когнитивной сложности
-void CheckInvalidSize(const std::shared_ptr<BaseTask> &task) {
-  EXPECT_FALSE(task->Validation());
+void CheckOutputEmpty(const std::shared_ptr<BaseTask> &task) {
   EXPECT_EQ(task->GetOutput().width, 0);
   EXPECT_EQ(task->GetOutput().height, 0);
   EXPECT_TRUE(task->GetOutput().data.empty());
+}
+
+void CheckInvalidSize(const std::shared_ptr<BaseTask> &task) {
+  EXPECT_FALSE(task->Validation());
+  CheckOutputEmpty(task);
 }
 
 TEST(FedoseevValidationTest, InvalidSize) {
