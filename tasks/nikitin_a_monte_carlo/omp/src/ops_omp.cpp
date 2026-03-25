@@ -97,8 +97,9 @@ bool NikitinAMonteCarloOMP::RunImpl() {
 
   double sum = 0.0;
 
-// Параллельный цикл — теперь переменные не structured binding
-#pragma omp parallel for schedule(static) reduction(+ : sum)
+// Параллельный цикл с явным указанием всех используемых переменных
+#pragma omp parallel for schedule(static) reduction(+ : sum) default(none) \
+    shared(lower_bounds, upper_bounds, dim, num_points, func_type)
   for (int i = 0; i < num_points; ++i) {
     std::vector<double> point(dim);
     for (std::size_t j = 0; j < dim; ++j) {
