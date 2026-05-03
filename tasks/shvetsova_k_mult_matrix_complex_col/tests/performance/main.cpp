@@ -3,6 +3,8 @@
 #include <tuple>
 
 #include "../../omp/include/ops_omp.hpp"
+#include "../../stl/include/ops_stl.hpp"
+#include "../../tbb/include/ops_tbb.hpp"
 #include "shvetsova_k_mult_matrix_complex_col/common/include/common.hpp"
 #include "shvetsova_k_mult_matrix_complex_col/seq/include/ops_seq.hpp"
 #include "util/include/perf_test_util.hpp"
@@ -69,7 +71,11 @@ const auto kSEQPerfTasks = ppc::util::MakeAllPerfTasks<InType, ShvetsovaKMultMat
     PPC_SETTINGS_shvetsova_k_mult_matrix_complex_col);
 const auto kOMPPerfTasks = ppc::util::MakeAllPerfTasks<InType, ShvetsovaKMultMatrixComplexOMP>(
     PPC_SETTINGS_shvetsova_k_mult_matrix_complex_col);
-const auto kAllPerfTasks = std::tuple_cat(kSEQPerfTasks, kOMPPerfTasks);
+const auto kTBBPerfTasks = ppc::util::MakeAllPerfTasks<InType, ShvetsovaKMultMatrixComplexTBB>(
+    PPC_SETTINGS_shvetsova_k_mult_matrix_complex_col);
+const auto kSTLPerfTasks = ppc::util::MakeAllPerfTasks<InType, ShvetsovaKMultMatrixComplexSTL>(
+    PPC_SETTINGS_shvetsova_k_mult_matrix_complex_col);
+const auto kAllPerfTasks = std::tuple_cat(kSEQPerfTasks, kOMPPerfTasks, kTBBPerfTasks, kSTLPerfTasks);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
